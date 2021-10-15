@@ -13,4 +13,3 @@ function DownloadOrderHistory() {
   CheckOrdersData();
   SetupLeverage();
 }
-

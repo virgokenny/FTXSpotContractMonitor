@@ -19,9 +19,6 @@ function CheckLastHourData() {
   var startDate = GetCurrentHourDateTime();
   var startTime = startDate.getTime() / 1000;
   var records = GetSpotContractDataInTime(startTime);
-  // var fpResults = GetFundingPayments(undefined, undefined, 10);
-  // var bhResults = GetBorrowHistory(undefined, undefined, 10);
-  //var records = HandleSpotContractData(fpResults, bhResults);
   if (Object.keys(records).length == 0) {
     return undefined;
   }
@@ -227,8 +224,8 @@ function HandleBorrowData(b1, b2) {
     coin = coin + ',' + b2.coin;
   }
   var size = b1.size + b2.size;
-  var rate = (b1.rate + b2.rate)/2;
   var cost = b1.cost + b2.cost;
+  var rate = cost / size;
 
   return {
     'coin': coin,
