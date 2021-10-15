@@ -16,18 +16,46 @@ function CheckOrdersData() {
   var startTime = startDate.getTime() / 1000;
   var endTime = endDate.getTime() / 1000;
 
-  var records = GetOrderDetails(startTime, endTime);
+  var limitation = 5000;
+
+  var records = {};
+
+  while(true) {
+    var results = GetOrderDetails(startTime, endTime, limitation);
+
+    for (var r of results) {
+      var id = r.id;
+      records[id] = r;
+      var d = new Date(r.time);
+      var t = d.getTime() / 1000;
+      endTime = Math.min(t, endTime);
+    }
+
+    if (results.length < limitation) {
+      break;
+    }
+  }
+
   var sheetRowLength = orderSheet.getLastRow() - 1;
 
-  if (records.length === sheetRowLength) {
+  if (Object.keys(records).length === sheetRowLength) {
     Logger.log("沒有需要更新");
     return;
   }
   else {
-      var rowNumber = 2;
-      for (var r of records) {
-        SetOrderSheetDataInRow(r, rowNumber++);
-      }
+    var recordsKeys = [];
+    for (const [key, value] of Object.entries(records)) {
+      recordsKeys.push( key );
+    }
+
+    recordsKeys.sort(function(a, b) {
+      return b - a;
+    });
+
+    var rowNumber = 2;
+    for (var key of recordsKeys) {
+      SetOrderSheetDataInRow(records[key], rowNumber++);
+    }
   }
 }
 
