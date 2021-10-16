@@ -52,11 +52,37 @@ function CheckOrdersData() {
       return b - a;
     });
 
-    var rowNumber = 2;
-    for (var key of recordsKeys) {
-      SetOrderSheetDataInRow(records[key], rowNumber++);
+    if (sheetRowLength == 0) {
+      var rowNumber = 2;
+      for (var key of recordsKeys) {
+        SetOrderSheetDataInRow(records[key], rowNumber++);
+      }
     }
+    else {
+      var lastRecord = records[recordsKeys[recordsKeys.length - 1]];
+      var rowNumber = FindRow(lastRecord);
+
+      for (var j = recordsKeys.length - 1; j >= 0; --j) {
+        if (InserOrderSheetData(records[recordsKeys[j]], rowNumber) == false) {
+          rowNumber--;
+          if (rowNumber < 1) break;
+        }
+      }
+    }
+
   }
+}
+
+function InserOrderSheetData(r, rowNumber) {
+  if (orderSheet.getRange(rowNumber, 1).getValue() == r.id) {
+    Logger.log("資料已存在: " + r.id);
+    return false;
+  }
+
+  Logger.log("插入資料: " + r.id);
+  orderSheet.insertRowBefore(rowNumber+1);
+  SetOrderSheetDataInRow(r, rowNumber+1);
+  return true;
 }
 
 function SetOrderSheetDataInRow(r, rowNumber) {
@@ -71,4 +97,14 @@ function SetOrderSheetDataInRow(r, rowNumber) {
   orderSheet.getRange(rowNumber, 9).setValue(r.feeCurrency);
   orderSheet.getRange(rowNumber, 10).setValue(r.feeRate);
   orderSheet.getRange(rowNumber, 11).setFormula('=F' + rowNumber + '*G' + rowNumber);
+}
+
+function FindRow(r) {
+  for (var i = 2; i <= orderSheet.getLastRow(); ++i) {
+    if (orderSheet.getRange(i, 1).getValue() == r.id) {
+      return i;
+    }
+  }
+  
+  return -1;
 }
