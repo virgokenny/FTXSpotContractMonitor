@@ -12,4 +12,5 @@ function CheckAllRecords() {
 function DownloadOrderHistory() {
   CheckOrdersData();
   SetupLeverage();
+  SetupPrincipal();
 }

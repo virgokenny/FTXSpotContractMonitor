@@ -9,6 +9,26 @@ function SetupLeverage() {
   overviewSheet.getRange('C14').setValue(leverage.toFixed(2));
 }
 
+function SetupPrincipal() {
+  var wh = GetWithdrawalsHistory();
+  var dh = GetDepositsHistory();
+
+  var principal = 0;
+  for (var r of dh) {
+    if (r.coin == 'USD' || r.coin == 'UDST') {
+      principal = principal + r.size;
+    }
+  }
+
+  for (var r of wh) {
+    if (r.coin == 'USD' || r.coin == 'UDST') {
+      principal = principal - r.size;
+    }
+  }
+
+  overviewSheet.getRange('C7').setValue(principal.toFixed(2));
+}
+
 function CheckOrdersData() {
   //var startDate = new Date('2021-09-01');
   var endDate = new Date();

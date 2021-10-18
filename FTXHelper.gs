@@ -43,7 +43,8 @@ function GetBorrowHistory(startTime = undefined, endTime = undefined, limit = 0)
   if (startTime != undefined && endTime != undefined) {
     command = command + '?start_time=' + startTime + "&end_time=" + endTime;
   }
-  else if (limit > 0) {
+  
+  if (limit > 0) {
     command = command + '?limit=' + limit;
   }
 
@@ -82,7 +83,8 @@ function GetOrderDetails(startTime = undefined, endTime = undefined, limit = 0) 
   if (startTime != undefined && endTime != undefined) {
     command = command + '&start_time=' + startTime + "&end_time=" + endTime;
   }
-  else if (limit > 0) {
+  
+  if (limit > 0) {
     command = command + '&limit=' + limit;
   }
 
@@ -120,7 +122,86 @@ function GetFundingPayments(startTime = undefined, endTime = undefined, limit = 
   if (startTime != undefined && endTime != undefined) {
       command = command + '?start_time=' + startTime + "&end_time=" + endTime;
   }
-  else if (limit > 0) {
+  
+  if (limit > 0) {
+    command = command + '?limit=' + limit;
+  }
+
+  var sign = toHexString(Utilities.computeHmacSha256Signature(ts + method + command, keys['apisecret']));
+  function toHexString(byteArray) {
+    return Array.from(byteArray, function(byte) {
+      return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+    }).join('');
+  }
+  var header = {
+    'FTX-KEY' : keys['apikey'],
+    'FTX-TS' : ts,
+    'FTX-SIGN' : sign
+  };
+
+  if (subaccount != '') {
+    header['FTX-SUBACCOUNT'] = encodeURI(subaccount);
+  }
+
+  var options = {
+    'method' : method,
+    'headers' : header
+  };
+  
+  var result = JSON.parse(UrlFetchApp.fetch(uri + command, options)).result;
+
+  return result;
+}
+
+function GetWithdrawalsHistory(startTime = undefined, endTime = undefined, limit = 0) {
+  var ts = String(Date.now());
+  var method = 'GET';
+  var command = basepath + "/wallet/withdrawals";
+
+  if (startTime != undefined && endTime != undefined) {
+      command = command + '?start_time=' + startTime + "&end_time=" + endTime;
+  }
+  
+  if (limit > 0) {
+    command = command + '?limit=' + limit;
+  }
+
+  var sign = toHexString(Utilities.computeHmacSha256Signature(ts + method + command, keys['apisecret']));
+  function toHexString(byteArray) {
+    return Array.from(byteArray, function(byte) {
+      return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+    }).join('');
+  }
+  var header = {
+    'FTX-KEY' : keys['apikey'],
+    'FTX-TS' : ts,
+    'FTX-SIGN' : sign
+  };
+
+  if (subaccount != '') {
+    header['FTX-SUBACCOUNT'] = encodeURI(subaccount);
+  }
+
+  var options = {
+    'method' : method,
+    'headers' : header
+  };
+  
+  var result = JSON.parse(UrlFetchApp.fetch(uri + command, options)).result;
+
+  return result;
+}
+
+function GetDepositsHistory(startTime = undefined, endTime = undefined, limit = 0) {
+  var ts = String(Date.now());
+  var method = 'GET';
+  var command = basepath + "/wallet/deposits";
+
+  if (startTime != undefined && endTime != undefined) {
+      command = command + '?start_time=' + startTime + "&end_time=" + endTime;
+  }
+  
+  if (limit > 0) {
     command = command + '?limit=' + limit;
   }
 
