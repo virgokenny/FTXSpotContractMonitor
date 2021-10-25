@@ -15,13 +15,13 @@ function SetupPrincipal() {
 
   var principal = 0;
   for (var r of dh) {
-    if (r.coin == 'USD' || r.coin == 'UDST') {
+    if (r.coin == 'USD' || r.coin == 'USDT') {
       principal = principal + r.size;
     }
   }
 
   for (var r of wh) {
-    if (r.coin == 'USD' || r.coin == 'UDST') {
+    if (r.coin == 'USD' || r.coin == 'USDT') {
       principal = principal - r.size;
     }
   }
@@ -58,7 +58,11 @@ function CheckOrdersData() {
 
   var sheetRowLength = orderSheet.getLastRow() - 1;
 
-  if (Object.keys(records).length === sheetRowLength) {
+  if (Object.keys(records).length == 0) {
+    Logger.log("沒有資料");
+    return;
+  }
+  else if (Object.keys(records).length === sheetRowLength) {
     Logger.log("沒有需要更新");
     return;
   }
