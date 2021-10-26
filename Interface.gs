@@ -1,6 +1,7 @@
 function CheckSpotContractJob() {
   var ret = CheckLastHourData(); 
   if (ret != undefined) {
+    SetupLeverage();
     NotifyLatestData();
   }
 }
